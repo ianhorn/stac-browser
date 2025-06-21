@@ -7,6 +7,8 @@ npm run build -- \
 --historyMode=hash \
 --pathPrefix="/browser"
 
-docker run -p 8080:8080 -d --restart=always \
--e SB_catalogUrl="http://0.0.0.0:8080" \
--e SB_catalogTitle="KyFromAbove Stac-Browser" stac-browser:v1
+docker run -p 8080:8080 -d --name stac-browser --restart=always \
+-e SB_catalogUrl="http://ec2-52-88-114-187.us-west-2.compute.amazonaws.com" \
+-e SB_catalogTitle="KyFromAbove Stac-Browser" \
+-e SB_pathPrefix="/browser" \
+stac-browser:v1 
