@@ -1,0 +1,33 @@
+docker build -t ianhorn/stac-browser:v1.0.0 --build-arg pathPrefix="/stac/browser/" .
+
+docker run --name stac-browser -p 8080:8080 -e SB_catalogUrl="/" -e SB_catalogTitle="KyFromAbove STAC Browser" -e SB_catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/stac/" ianhorn/stac-browser:v1.0.0
+
+server {
+listen 8080;
+server_name localhost;
+
+location /stac/browser/ {
+    alias /usr/share/nginx/html/;
+    index index.html;
+    try_files \$uri \$uri/ index.html;
+}
+
+error_page 500 502 503 504 /50x.html;
+location = /50x.html {
+    root /usr/share/nginx/html;
+}
+
+docker build -t ianhorn/stac-browser:v1.0.1
+
+
+docker build -t ianhorn/stac-browser:v1.0.1 --build-arg pathPrefix="/" --build-arg historyMode=hash .
+
+docker run --name stac-browser -p 8080:8080 -e SB_catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/stac/" -e --restart=always ianhorn/stac-browser:v1.0.3 
+
+
+docker run -d --name test -p 8080:8080 -e SB_catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/stac/" -e --restart=always -e SB_pathPrefix="/" ianhorn/stac-browser:v1.0.3 
+
+docker run -d --name stac-browser -p 8080:8080 -e SB_catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/stac/" -e --restart=always -e SB_pathPrefix="/" ianhorn/stac-browser:v1.0.3 
+
+
+npm run build --
