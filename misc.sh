@@ -1,7 +1,6 @@
 npm start -- --open --catalogUrl="http://localhost:8082"
 
-npm run build -- --catalogUrl="http://ec2-52-88-114-187.us-west-2.compute.amazonaws.com:8082/" \
---historyMode=hash \
+npm run build -- --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/stac/" \
 --catalogTitle="KyFromAbove Stac-Browser" 
 
 npm run build -- \

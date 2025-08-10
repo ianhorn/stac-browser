@@ -1,5 +1,5 @@
 module.exports = {
-    catalogUrl: null,
+    catalogUrl: "https://spved5ihrl.execute-api.us-west-2.amazonaws.com/stac/",
     catalogTitle: "STAC Browser",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
     allowedDomains: [],
@@ -31,8 +31,8 @@ module.exports = {
     displayGeoTiffByDefault: false,
     buildTileUrlTemplate: ({href, asset}) => "https://tiles.rdnt.io/tiles/{z}/{x}/{y}@2x?url=" + encodeURIComponent(href),
     stacProxyUrl: null,
-    pathPrefix: "/browser",
-    historyMode: "history",
+    pathPrefix: "/",
+    historyMode: "hash",
     cardViewMode: "cards",
     cardViewSort: "asc",
     showKeywordsInItemCards: false,
