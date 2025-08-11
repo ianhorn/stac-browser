@@ -2,7 +2,7 @@
 .cache/
 node_modules
 /dist
-
+dist copy
 
 # local env files
 .env
