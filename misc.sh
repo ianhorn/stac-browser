@@ -1,7 +1,10 @@
 npm start -- --open --catalogUrl="http://localhost:8082"
 
 npm run build -- --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/" \
---catalogTitle="Kentucky From Above SpatioTemporal Asset Catalog" 
+--catalogTitle="Kentucky From Above SpatioTemporal Asset Catalog" \
+--pathPrefix="/" \
+--historyMode:"hash"
+
 
 npm run build -- \
 --catalogUrl="http://localhost:8082/" \
