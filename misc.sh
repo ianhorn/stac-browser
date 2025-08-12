@@ -1,8 +1,8 @@
-npm start -- --open --catalogUrl="http://localhost:8082"
+npm start -- --open --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/"
 
 npm run build -- --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/" \
 --catalogTitle="Kentucky From Above SpatioTemporal Asset Catalog" \
---pathPrefix="/" \
+--pathPrefix="browser" \
 --historyMode:"hash"
 
 
