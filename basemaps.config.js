@@ -11,6 +11,33 @@ const XYZ = 'XYZ';
 // There's a layerCreated callback that can be used to modify the layer and source after it has been created:
 // async layerCreated(Layer layer, Source source) => Layer
 const BASEMAPS = {
+  tcmbase: {
+    url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+    name: 'The Commonwealth Basemap',
+    is: XYZ,
+    attribution: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+    tileSize: 256,
+    maxZoom: 21,
+    crs: CRS.EPSG3857
+  },
+  tcmstreet: {
+    url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Street_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+    name: 'TCM - Street',
+    is: XYZ,
+    attribution: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+    tileSize: 256,
+    maxZoom: 21,
+    crs: CRS.EPSG3857
+  },
+  tcmtopo: {
+    url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Topo_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+    name: 'TCM-Topo',
+    is: XYZ,
+    attribution: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+    tileSize: 256,
+    maxZoom: 21,
+    crs: CRS.EPSG3857
+  },
   earth: [
     {
       url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -76,7 +103,7 @@ export default function configureBasemap(stac, i18n) {
     targets = stac.getMetadata('ssys:targets');
   }
   if (!targets) {
-    targets = ['earth'];
+    targets = ['earth, tcmbase'];  // added tcmbase
   }
 
   let layers = [];

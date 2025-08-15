@@ -1,6 +1,6 @@
 module.exports = {
     catalogUrl: null,
-    catalogTitle: "STAC Browser",
+    catalogTitle: "KyFromAbove Stac-Browser ",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
     allowedDomains: [],
     detectLocaleFromBrowser: true,
