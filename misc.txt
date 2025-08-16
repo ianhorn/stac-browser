@@ -1,5 +1,16 @@
+for S3 Static page
+
 npm run build -- --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/" \
   --historyMode="hash" \
-  --pathPrefix=-""
+
+
+npm run build -- --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/" \
+  --pathPrefix="/stac-browser" \
+  --history='hash'
+
+for Amplify
+npm run build -- --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/" \
+  --pathPrefix="" \
+  --historyMode="hash"
 
   npm start -- --open --catalogUrl="https://spved5ihrl.execute-api.us-west-2.amazonaws.com/"
