@@ -2,7 +2,7 @@
 .cache/
 node_modules
 /dist
-
+*.zip
 
 # local env files
 .env

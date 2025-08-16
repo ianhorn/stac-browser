@@ -1,6 +1,6 @@
 module.exports = {
-    catalogUrl: null,
-    catalogTitle: "STAC Browser",
+    catalogUrl: "https://spved5ihrl.execute-api.us-west-2.amazonaws.com/",
+    catalogTitle: "Kentucky From Above SpatioTemporal Asset Catalog",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
     allowedDomains: [],
     detectLocaleFromBrowser: true,
@@ -36,7 +36,7 @@ module.exports = {
     cardViewSort: "asc",
     showKeywordsInItemCards: false,
     showKeywordsInCatalogCards: false,
-    showThumbnailsAsAssets: false,
+    showThumbnailsAsAssets: true,
     geoTiffResolution: 128,
     redirectLegacyUrls: false,
     itemsPerPage: 12,
