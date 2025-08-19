@@ -18,7 +18,7 @@ const BASEMAPS = {
     attribution: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
     tileSize: 256,
     maxZoom: 21,
-    crs: CRS.EPSG3857
+    project: "3857"
   },
   tcmstreet: {
     url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Street_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
@@ -27,7 +27,7 @@ const BASEMAPS = {
     attribution: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
     tileSize: 256,
     maxZoom: 21,
-    crs: CRS.EPSG3857
+    project: "3857"
   },
   tcmtopo: {
     url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Topo_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
@@ -36,7 +36,7 @@ const BASEMAPS = {
     attribution: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
     tileSize: 256,
     maxZoom: 21,
-    crs: CRS.EPSG3857
+    project: "3857"
   },
   earth: [
     {
