@@ -1,5 +1,5 @@
 module.exports = {
-    catalogUrl: null,
+    catalogUrl: "https://spved5ihrl.execute-api.us-west-2.amazonaws.com/",
     catalogTitle: "KyFromAbove Stac-Browser ",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
     allowedDomains: [],
