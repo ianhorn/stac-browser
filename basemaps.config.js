@@ -1,5 +1,4 @@
-import { Collection, Item } from './src/models/stac';
-import Utils from './src/utils';
+import { Collection } from './src/models/stac';
 
 const USGS_ATTRIBUTION = 'USGS Astrogeology';
 const WMS = 'TileWMS';
@@ -13,10 +12,30 @@ const XYZ = 'XYZ';
 const BASEMAPS = {
   earth: [
     {
-      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+      title: 'The Commonwealth Basemap',
       is: XYZ,
-      title: 'OpenStreetMap',
-      attributions: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.',
+      attributions: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+      tileSize: 256,
+      maxZoom: 21,
+      projection: "EPSG:3857"
+    },
+    {
+      url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Street_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+      title: 'TCM - Street',
+      is: XYZ,
+      attributions: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+      tileSize: 256,
+      maxZoom: 21,
+      projection: "EPSG:3857"
+    },
+    {
+      url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Topo_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+      title: 'TCM-Topo',
+      is: XYZ,
+      attributions: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+      tileSize: 256,
+      maxZoom: 21,
       projection: "EPSG:3857"
     }
   ],
