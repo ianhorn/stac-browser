@@ -10,8 +10,23 @@ const BASEMAPS = {
       is: 'XYZ',
       title: 'OpenStreetMap',
       attributions: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.',
-      projection: "EPSG:3857"
-    }
+      projection: "EPSG:3857",
+      visible: true,
+      zIndex: 0
+    },
+  ],
+  kyfromabove: [
+    {
+      url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+      title: 'The Commonwealth Basemap',
+      is: 'XYZ',
+      attributions: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+      tileSize: 256,
+      maxZoom: 21,
+      projection: "EPSG:3857",
+      visible: true,
+      zIndex: 1
+    },
   ],
   europa: [
     {
@@ -69,7 +84,7 @@ export default function configureBasemap(stac, i18n) {
     targets = stac.getMetadata('ssys:targets');
   }
   if (!targets) {
-    targets = ['earth'];
+    targets = ['earth', 'kyfromabove'];
   }
 
   let layers = [];

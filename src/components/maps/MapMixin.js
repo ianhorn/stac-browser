@@ -196,7 +196,14 @@ export default {
       (await Promise.all(promises))
         .filter(layer => Utils.isObject(layer))
         .forEach((layer, i) => {
-          layer.setVisible(i === visibleLayer);
+          const options = basemaps[i];
+          // If visible property is set in config, respect it; otherwise use visibleLayer index
+          const shouldBeVisible = options?.visible !== undefined ? options.visible : (i === visibleLayer);
+          layer.setVisible(shouldBeVisible);
+          // Set z-index if provided in config
+          if (options?.zIndex !== undefined) {
+            layer.setZIndex(options.zIndex);
+          }
           this.map.addLayer(layer);
         });
     }
