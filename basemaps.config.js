@@ -25,8 +25,8 @@ const BASEMAPS = {
       maxZoom: 21,
       projection: "EPSG:3857",
       visible: true,
-      zIndex: 1
-    },
+      zIndex: 0
+    }
   ],
   europa: [
     {
