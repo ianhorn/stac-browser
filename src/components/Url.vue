@@ -1,22 +1,30 @@
 <template>
   <b-form-group :label="label" :label-for="id">
     <b-input-group size="sm">
-      <b-form-input :id="id" ref="input" :model-value="url" readonly />
-      <template #append>
+      <b-form-input :id="id" ref="input" :value="url" readonly />
+      <b-input-group-append>
         <CopyButton :copyText="url" variant="primary" />
         <b-button v-if="open" :href="url" target="_blank" variant="primary" :title="$t('open')"><b-icon-arrow-up-right-square /></b-button>
-      </template>
+      </b-input-group-append>
     </b-input-group>
   </b-form-group>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
+import {
+  BFormInput, BFormGroup,
+  BIconArrowUpRightSquare,
+  BInputGroup, BInputGroupAppend } from 'bootstrap-vue';
 
 export default {
   name: "Url",
   components: {
-    CopyButton: defineAsyncComponent(() => import('./CopyButton.vue'))
+    BFormGroup,
+    BFormInput,
+    BIconArrowUpRightSquare,
+    BInputGroup,
+    BInputGroupAppend,
+    CopyButton: () => import('./CopyButton.vue')
   },
   props: {
     id: {
@@ -38,3 +46,10 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.popover {
+  width: 100%;
+  max-width: 800px;
+}
+</style>

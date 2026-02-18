@@ -1,3 +1,1 @@
-import ajvI18n from 'ajv-i18n/localize/ar';
-
-export default ajvI18n;
+export default require('ajv-i18n/localize/ar');

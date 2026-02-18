@@ -1,6 +1,6 @@
 <template>
   <div class="queryable-group">
-    <div class="queryable-row">
+    <b-row class="queryable-row">
       <span class="title">
         {{ queryable.title }}
       </span>
@@ -14,26 +14,16 @@
           button-class="d-flex justify-content-between align-items-center"
         >
           <span>{{ op.longLabel }}</span>
-          <b-badge variant="dark" class="ms-2">{{ op.label }}</b-badge>
+          <b-badge variant="dark" class="ml-2">{{ op.label }}</b-badge>
         </b-dropdown-item-button>
       </b-dropdown>
-
-      <VueDatePicker
+      
+      <date-picker
         v-if="queryable.isTemporal"
         class="value"
-        :model-value="value?.value"
-        @update:model-value="updateValue"
-        :locale="datepickerLang"
-        :week-start="weekStartDay"
-        :formats="{ input: queryable.isDateTime ? dateTimeFormat : dateFormat }"
-        :close-on-scroll="false"
-        :time-config="{ 
-          enableTimePicker: queryable.isDateTime,
-          seconds: queryable.isDateTime,
-          timePickerInline: true 
-        }"
-        :input-attrs="{ clearable: true }"
-        auto-apply
+        :value="value.value"
+        @input="updateValue($event)"
+        v-bind="validation"
       />
 
       <b-form-select
@@ -41,24 +31,24 @@
         :options="queryableOptions"
         size="sm"
         class="value"
-        :model-value="value.value"
-        @update:model-value="updateValue($event)"
+        :value="value.value"
+        @input="updateValue($event)"
         v-bind="validation"
       />
       <b-form-input
         v-else-if="queryable.isText || queryable.isNumeric"
         size="sm"
         class="value"
-        :model-value="value.value"
-        @update:model-value="updateValue($event)"
+        :value="value.value"
+        @input="updateValue($event)"
         v-bind="validation"
       />
       <b-form-checkbox
         v-else-if="queryable.isBoolean"
         switch
         class="value"
-        :model-value="value.value"
-        @update:model-value="updateValue($event)"
+        :checked="value.value"
+        @input="updateValue($event)"
         v-bind="validation"
       >
         {{ $t(`checkbox.${value.value}`) }}
@@ -67,19 +57,17 @@
       <b-button class="delete" size="sm" variant="danger" @click="$emit('remove-queryable')">
         <b-icon-x-circle-fill aria-hidden="true" />
       </b-button>
-    </div>
+    </b-row>
 
-    <div v-if="queryable.description || operator.description" class="queryable-help text-muted small">
+    <b-row v-if="queryable.description || operator.description" class="queryable-help text-muted small">
       <Description v-if="operator.description" :description="operator.description" inline />
       <Description v-if="queryable.description" :description="queryable.description" inline />
-    </div>
+    </b-row>
   </div>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
-
-import { BDropdown, BDropdownItemButton } from 'bootstrap-vue-next';
+import { BBadge, BDropdown, BDropdownItemButton, BFormCheckbox, BFormInput, BFormSelect, BIconXCircleFill } from 'bootstrap-vue';
 
 import DatePickerMixin from './DatePickerMixin';
 import Utils from '../utils';
@@ -88,9 +76,14 @@ import CqlValue from '../models/cql2/value';
 export default {
   name: 'QueryableInput',
   components: {
+    BBadge, 
     BDropdown,
     BDropdownItemButton,
-    Description: defineAsyncComponent(() => import('./Description.vue'))
+    BFormCheckbox,
+    BFormInput,
+    BFormSelect,
+    BIconXCircleFill,
+    Description: () => import('./Description.vue')
   },
   mixins: [
     DatePickerMixin
@@ -113,14 +106,16 @@ export default {
       required: true
     }
   },
-  emits: [
-    'remove-queryable',
-    'update:value',
-    'update:operator'
-  ],
   computed: {
     validation() {
-      if (this.queryable.isText) {
+      if (this.queryable.isTemporal) {
+        return {
+          type: this.queryable.isDateTime ? 'datetime' : 'date',
+          lang: this.datepickerLang,
+          format: this.queryable.isDateTime ? this.dateTimeFormat : this.dateFormat
+        };
+      }
+      else if (this.queryable.isText) {
         return {
           type: 'text',
           minlength: this.schema.minLength,
@@ -179,9 +174,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import 'bootstrap/scss/mixins';
+@import '~bootstrap/scss/mixins';
 @import "../theme/variables.scss";
-@import '../theme/datepicker.scss';
 
 .queryable-row {
   margin: 0.25em 0;
@@ -189,19 +183,18 @@ export default {
   flex-direction: row;
   flex-wrap: nowrap;
   align-content: center;
-  display: flex;
 
-  .title, .value {
-    flex-grow: 4;
-    width: 7rem !important;
-  }
-  .op {
-    min-width: 4rem;
-    width: auto;
-  }
   .delete {
     width: auto;
   }
+  .title, .value {
+    flex-grow: 4;
+    width: 8rem !important;
+  }
+}
+
+.op {
+  min-width: 4rem;
 }
 
 .queryable-help {

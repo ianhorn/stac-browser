@@ -1,15 +1,15 @@
 <template>
-  <b-card no-body :class="classes" v-visible.400="load" :img-placement="isList ? 'end' : undefined">
+  <b-card no-body :class="classes" v-b-visible.400="load" :img-right="isList">
     <div class="card-img-wrapper">
-      <b-card-img v-if="hasImage" class="thumbnail" v-bind="thumbnail" lazy />
+      <b-card-img-lazy v-if="hasImage" class="thumbnail" offset="200" v-bind="thumbnail" />
     </div>
     <b-card-body>
       <b-card-title>
         <StacLink :data="[data, catalog]" class="stretched-link" />
       </b-card-title>
       <b-card-text v-if="fileFormats.length > 0 || hasDescription || isDeprecated" class="intro">
-        <b-badge v-if="isDeprecated" variant="warning" class="me-1 mt-1 deprecated">{{ $t('deprecated') }}</b-badge>
-        <b-badge v-for="format in fileFormats" :key="format" variant="secondary" class="me-1 mt-1 fileformat">{{ format }}</b-badge>
+        <b-badge v-if="isDeprecated" variant="warning" class="mr-1 mt-1 deprecated">{{ $t('deprecated') }}</b-badge>
+        <b-badge v-for="format in fileFormats" :key="format" variant="secondary" class="mr-1 mt-1 fileformat">{{ format }}</b-badge>
         {{ summarizeDescription }}
       </b-card-text>
       <Keywords v-if="showKeywordsInCatalogCards && keywords.length > 0" :keywords="keywords" variant="primary" />
@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
 import { mapState, mapGetters } from 'vuex';
 import FileFormatsMixin from './FileFormatsMixin';
 import StacFieldsMixin from './StacFieldsMixin';
@@ -30,19 +29,12 @@ import CardMixin from './CardMixin';
 import StacLink from './StacLink.vue';
 import { STAC } from 'stac-js';
 import { formatTemporalExtent } from '@radiantearth/stac-fields/formatters';
-import { BCard, BCardBody, BCardFooter, BCardImg, BCardText, BCardTitle } from 'bootstrap-vue-next';
 
 export default {
   name: 'Catalog',
   components: {
-    BCard,
-    BCardBody,
-    BCardFooter,
-    BCardImg,
-    BCardText,
-    BCardTitle,
     StacLink,
-    Keywords: defineAsyncComponent(() => import('./Keywords.vue'))
+    Keywords: () => import('./Keywords.vue')
   },
   mixins: [
     FileFormatsMixin,

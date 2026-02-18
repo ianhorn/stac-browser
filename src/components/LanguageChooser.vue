@@ -4,31 +4,37 @@
       <b-icon-flag /><span class="button-label">{{ $t('source.language.label', {currentLanguage}) }}</span>
     </template>
     <b-dropdown-item v-for="l of languages" :key="l.code" class="lang-item" @click="setLocale(l.code)">
-      <b-icon-check :class="{hide: currentLocale !== l.code}" />
+      <b-icon-check v-if="currentLocale === l.code" />
+      <b-icon-blank v-else />
       <span class="title">
         <span :lang="l.code">{{ l.native }}</span>
         <template v-if="l.global && l.global !== l.native"> / <span lang="en">{{ l.global }}</span></template>
       </span>
-      <b-icon-exclamation-triangle v-if="supportsLanguageExt && (!l.ui || !l.data)" :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')" class="ms-2" />
+      <b-icon-exclamation-triangle v-if="supportsLanguageExt && (!l.ui || !l.data)" :title="l.ui ? $t('source.language.onlyUI') : $t('source.language.onlyData')" class="ml-2" />
     </b-dropdown-item>
   </b-dropdown>
 </template>
 
 <script>
+import {
+  BDropdown, BDropdownItem, 
+  BIconBlank, BIconCheck, BIconExclamationTriangle, BIconFlag } from "bootstrap-vue";
 
 import { STAC } from 'stac-js';
 import { getBest, prepareSupported } from 'stac-js/src/locales';
-
-import { BDropdown, BDropdownItem } from 'bootstrap-vue-next';
 
 import { getDataLanguages, STAC_LANGUAGE_EXT } from '../i18n';
 import Utils from '../utils';
 
 export default {
   name: 'LanguageChooser',
-  components: {
+  components:  {
     BDropdown,
     BDropdownItem,
+    BIconBlank,
+    BIconCheck,
+    BIconExclamationTriangle,
+    BIconFlag,
   },
   props: {
     data: {
@@ -44,7 +50,6 @@ export default {
       required: true
     }
   },
-  emits: ['setLocale'],
   computed: {
     dataLanguages() {
       let dataLanguages = [];
@@ -137,9 +142,6 @@ export default {
 <style lang="scss" scoped>
 .lang-item > .dropdown-item {
   display: flex;
-  svg.hide {
-    opacity: 0;
-  }
   > .title {
     flex: 1;
   }

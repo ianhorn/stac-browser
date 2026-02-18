@@ -5,9 +5,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-
-export default defineComponent({
+export default {
   name: 'Loading',
   props: {
     fill: {
@@ -42,7 +40,7 @@ export default defineComponent({
       return classes;
     }
   }
-});
+};
 </script>
 
 <style lang="scss" scoped>

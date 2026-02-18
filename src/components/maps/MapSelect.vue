@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import MapMixin from './MapMixin.js';
 import LayerControl from './LayerControl.vue';
 import TextControl from './TextControl.vue';
@@ -47,7 +46,6 @@ export default {
       default: null
     }
   },
-  emits: ['input'],
   data() {
     return {
       crs: 'EPSG:4326',
@@ -56,7 +54,6 @@ export default {
     };
   },
   computed: {
-    ...mapState(['uiLanguage']),
     projectedExtent() {
       if (this.extent) {
         return transformExtent(this.extent, this.crs, this.map.getView().getProjection());
@@ -70,10 +67,13 @@ export default {
   watch: {
     async stac() {
       await this.initMap();
-    },
-    uiLanguage() {
-      
-    },
+    }
+  },
+  created() {
+    // This recreates the component so that it picks up the new translations
+    this.$root.$on('uiLanguageChanged', () => {
+      // todo: update the language resources
+    });
   },
   async mounted() {
     await this.initMap();
@@ -198,5 +198,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "ol/ol.css";
+@import "../../../node_modules/ol/ol.css";
 </style>

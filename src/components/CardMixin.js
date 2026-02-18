@@ -1,8 +1,9 @@
 import { mapState } from 'vuex';
-import Utils from '../utils';
 import { STAC } from 'stac-js';
+import Utils from '../utils';
 
 export default {
+  name: 'CardMixin',
   props: {
     showThumbnail: {
       type: Boolean,
@@ -34,9 +35,13 @@ export default {
             src: t.getAbsoluteUrl(),
             alt: t.title,
             crossorigin: this.crossOriginMedia,
+            right: this.isList,
+            blankColor: "rgba(0, 0, 0, 0.125)",
             width,
             height,
-            placement: this.isList ? 'end' : 'top'
+            // for b-card-img-lazy
+            "blank-width": width,
+            "blank-height": height
           };
         }
       }
@@ -49,13 +54,27 @@ export default {
       return [];
     },
     isDeprecated() {
-      return this.data instanceof STAC && Boolean(this.data.getMetadata('deprecated'));
+      if (!(this.data instanceof STAC)) {
+        return false;
+      }
+      // Items have deprecated in properties, catalogs/collections have it at the root
+      const deprecated = this.data.isItem() ? this.data.properties?.deprecated : this.data.deprecated;
+      return Boolean(deprecated);
     },
     hasDescription() {
-      return this.data instanceof STAC && Utils.hasText(this.data.getMetadata('description'));
+      if (!(this.data instanceof STAC)) {
+        return false;
+      }
+      // Use getMetadata which handles both items and catalogs
+      const description = this.data.getMetadata('description');
+      return Utils.hasText(description);
     },
     summarizeDescription() {
-      return this.hasDescription ? Utils.summarizeMd(this.data.getMetadata('description'), 300) : '';
+      if (!this.hasDescription) {
+        return '';
+      }
+      const description = this.data.getMetadata('description');
+      return Utils.summarizeMd(description, 300);
     }
   }
 };

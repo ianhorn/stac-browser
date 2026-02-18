@@ -1,7 +1,7 @@
 <template>
   <section class="providers mb-4">
-    <h2>{{ $t('providers.title', count) }}</h2>
-    <b-list-group v-if="isSimple" class="mimic-accordion">
+    <h2>{{ $tc('providers.title', count) }}</h2>
+    <b-list-group v-if="isSimple" class="mimic-expandable-card">
       <b-list-group-item
         v-for="(provider, key) in providers" :key="key" :href="provider.url" :disabled="!provider.url"
         target="_blank" variant="provider" class="provider"
@@ -10,23 +10,23 @@
         <ProviderRoles :roles="provider.roles" />
       </b-list-group-item>
     </b-list-group>
-    <b-accordion v-else>
+    <div v-else class="accordion" role="tablist">
       <Provider v-for="(provider, key) in providers" :key="key" :id="String(key)" :provider="provider" />
-    </b-accordion>
+    </div>
   </section>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
+import { BListGroup, BListGroupItem } from 'bootstrap-vue';
 import ProviderRoles from './ProviderRoles.vue';
 import Utils from '../utils';
-import { BAccordion } from 'bootstrap-vue-next';
 
 export default {
   name: 'Providers',
   components: {
-    Provider: defineAsyncComponent(() => import('./Provider.vue')),
-    BAccordion,
+    BListGroup,
+    BListGroupItem,
+    Provider: () => import('./Provider.vue'),
     ProviderRoles
   },
   props: {

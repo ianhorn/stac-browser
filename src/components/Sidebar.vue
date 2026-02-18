@@ -1,10 +1,7 @@
 <template>
-  <b-offcanvas
-    initial-animation id="sidebar" :model-value="modelValue" @update:model-value="emit"
-    :title="$t('browse')" teleport-to="#stac-browser" footer-class="offcanvas-footer"
-  >
+  <b-sidebar id="sidebar" v-model="visible" :title="$t('browse')" backdrop lazy>
     <template #default>
-      <Loading v-if="loading" />
+      <Loading v-if="!parents" />
       <Tree v-else-if="root" :item="root" :path="parents" />
     </template>
     <template v-if="allowSelectCatalog" #footer>
@@ -12,32 +9,26 @@
         <router-link to="/"><b-icon-arrow-left-right /> {{ $t('sidebar.switchCatalog') }}</router-link>
       </b-button>
     </template>
-  </b-offcanvas>
+  </b-sidebar>
 </template>
 
 <script>
+import { BIconArrowLeftRight, BSidebar } from "bootstrap-vue";
 import { mapGetters, mapState } from 'vuex';
 import Loading from './Loading.vue';
 import Tree from './Tree.vue';
-import { BOffcanvas } from 'bootstrap-vue-next';
 
 export default {
   name: 'Sidebar',
   components: {
+    BIconArrowLeftRight,
+    BSidebar,
     Loading,
-    Tree,
-    BOffcanvas
+    Tree
   },
-  props: {
-    modelValue: {
-      type: Boolean,
-      required: true
-    }
-  },
-  emits: ['update:modelValue'],
   data() {
     return {
-      loading: true
+      visible: false
     };
   },
   computed: {
@@ -45,16 +36,11 @@ export default {
     ...mapGetters(['root'])
   },
   watch: {
-    modelValue: {
+    visible: {
       immediate: true,
       async handler(visible) {
         if (visible) {
-          try {
-            this.loading = true;
-            await this.$store.dispatch('loadParents');
-          } finally {
-            this.loading = false;
-          }
+          await this.$store.dispatch('loadParents');
         }
 
         if (visible) {
@@ -64,22 +50,16 @@ export default {
           document.body.classList.remove("sidebar");
         }
       }
-    },
-    $route() {
-      // Close sidebar when route changes
-      this.emit(false);
     }
   },
-  methods: {
-    emit(value) {
-      this.$emit('update:modelValue', value);
-    }
+  mounted() {
+    this.visible = true;
   }
 };
 </script>
 
 <style lang="scss">
-@import 'bootstrap/scss/mixins';
+@import '~bootstrap/scss/mixins';
 @import "../theme/variables.scss";
 
 #stac-browser #sidebar {
@@ -87,34 +67,16 @@ export default {
   min-width: 400px;
   max-width: 600px;
   padding-top: $header-margin;
-  background-color: $light;
 
-  @include media-breakpoint-down(sm) {
-    width: 100%;
-    min-width: 100px;
-    max-width: 100%;
-  }
-
-  .offcanvas-header {
+  .b-sidebar-body {
     padding: 0.5rem 1rem;
 
-    .offcanvas-title {
-      font-size: 1.5rem;
+    .tree.root {
+      margin: 0;
+      padding: 0;
     }
   }
-
-  .offcanvas-body {
-    padding: 0.5rem 1rem;
-
-    .tree {
-      &.root {
-        margin: 0;
-        padding: 0;
-      }
-    }
-  }
-
-  .offcanvas-footer {
+  .b-sidebar-footer {
     border-top: 1px solid rgba(0,0,0,.125);
 
     .switch-catalog {
@@ -123,4 +85,14 @@ export default {
   }
 }
 
+@include media-breakpoint-down(sm) {
+  body.sidebar {
+    overflow: hidden;
+  }
+
+  #stac-browser #sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+}
 </style>

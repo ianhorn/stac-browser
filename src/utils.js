@@ -1,7 +1,7 @@
 import URI from 'urijs';
 import removeMd from 'remove-markdown';
 import { stacPagination } from "./rels";
-import { Link, Asset } from 'stac-js';
+import Link from 'stac-js/src/link.js';
 
 export const commonFileNames = ['catalog', 'collection', 'item'];
 
@@ -169,7 +169,7 @@ export default class Utils {
       uri1.path(Utils.removeTrailingSlash(uri1.path()));
       uri2.path(Utils.removeTrailingSlash(uri2.path()));
       return uri1.equals(uri2);
-    } catch {
+    } catch (error) {
       return false;
     }
   }
@@ -460,30 +460,6 @@ export default class Utils {
       default:
         return 0;
     }
-  }
-
-  static assetFilename(asset, response = null) {
-    // Get the preferred filename from the file:local_path property
-    if (asset instanceof Asset) {
-      const localPath = asset.getMetadata('file:local_path');
-      if (typeof localPath === 'string') {
-        return URI(localPath).filename();
-      }
-    }
-    // Get the filename from the content-disposition header
-    const contentDisposition = response?.headers.get('content-disposition');
-    if (typeof contentDisposition === 'string') {
-      const parts = contentDisposition.match(/filename=(?:"|)([^"]+)(?:"|)(?:;|$)/);
-      if (parts) {
-        return parts[1];
-      }
-    }
-    // Fallback to the filename from the href
-    if (Utils.isObject(asset) && typeof asset.href === 'string') {
-      return URI(asset.href).filename();
-    }
-    // Fallback to a default filename
-    return 'download';
   }
 
 }

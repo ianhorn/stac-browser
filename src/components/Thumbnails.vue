@@ -13,12 +13,11 @@
 
 <script>
 import { mapState } from 'vuex';
-import { defineAsyncComponent } from 'vue';
 
 export default {
   name: 'Thumbnails',
   components: {
-    FullscreenButton: defineAsyncComponent(() => import('./FullscreenButton.vue'))
+    FullscreenButton: () => import('./FullscreenButton.vue')
   },
   props: {
     thumbnails: {
@@ -49,7 +48,7 @@ export default {
       border-radius: $border-radius;
 
       &:hover {
-        border-color: $primary;
+        border-color: map-get($theme-colors, "primary");
       }
     }
 

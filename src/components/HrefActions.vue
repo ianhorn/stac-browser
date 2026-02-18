@@ -4,9 +4,9 @@
       <b-button variant="danger" v-if="requiresAuth" tag="a" tabindex="0" :id="`popover-href-${id}-btn`" @click="handleAuthButton">
         <b-icon-lock /> {{ $t('authentication.required') }}
       </b-button>
-      <b-button v-if="hasDownloadButton" :disabled="requiresAuth" variant="primary" v-bind="downloadProps" v-on="downloadEvents">
+      <b-button v-if="hasDownloadButton" :disabled="requiresAuth" v-bind="downloadProps" v-on="downloadEvents" variant="primary">
         <b-spinner v-if="loading" small variant="light" />
-        <b-icon-box-arrow-up-right v-else-if="browserCanOpenFile" />
+        <b-icon-box-arrow-up-right v-else-if="browserCanOpenFile" /> 
         <b-icon-download v-else />
         {{ buttonText }}
       </b-button>
@@ -14,20 +14,20 @@
         {{ copyButtonText }}
       </CopyButton>
       <b-button v-if="hasShowButton" @click="show" variant="primary">
-        <b-icon-eye class="me-1" />
+        <b-icon-eye class="mr-1" />
         <template v-if="isThumbnail">{{ $t('assets.showThumbnail') }}</template>
         <template v-else>{{ $t('assets.showOnMap') }}</template>
       </b-button>
-      <b-button v-for="action of actions" :key="action.id" variant="primary" v-bind="action.btnOptions" @click="action.onClick">
-        <component v-if="action.icon" :is="action.icon" class="me-1" />
+      <b-button v-for="action of actions" v-bind="action.btnOptions" :key="action.id" variant="primary" @click="action.onClick">
+        <component v-if="action.icon" :is="action.icon" class="mr-1" />
         {{ action.text }}
       </b-button>
     </b-button-group>
-
+    
     <b-popover
-      v-if="auth.length > 1" click focus
-      :id="`popover-href-${id}`" class="href-auth-methods" :target="`popover-href-${id}-btn`"
-      :title="$t('authentication.chooseMethod')" teleport-to="#stac-browser" :boundary-padding="10"
+      v-if="auth.length > 1"
+      :id="`popover-href-${id}`" custom-class="href-auth-methods" :target="`popover-href-${id}-btn`"
+      triggers="focus" container="stac-browser" :title="$t('authentication.chooseMethod')"
     >
       <b-list-group>
         <AuthSchemeItem v-for="(method, i) in auth" :key="i" :method="method" @authenticate="startAuth" />
@@ -38,13 +38,13 @@
 
 
 <script>
-import { defineAsyncComponent } from 'vue';
-
+import { BIconBoxArrowUpRight, BIconDownload, BIconEye, BIconLock, BListGroup, BPopover, BSpinner } from 'bootstrap-vue';
 import Description from './Description.vue';
 import Utils, { imageMediaTypes, mapMediaTypes } from '../utils';
 import { mapGetters, mapState } from 'vuex';
 import AssetActions from '../../assetActions.config';
 import LinkActions from '../../linkActions.config';
+import { stacRequestOptions } from '../store/utils';
 import URI from 'urijs';
 import AuthUtils from './auth/utils';
 import { Asset } from 'stac-js';
@@ -55,10 +55,17 @@ let i = 0;
 export default {
   name: 'HrefActions',
   components: {
-    AuthSchemeItem: defineAsyncComponent(() => import('./AuthSchemeItem.vue')),
-    BPopover: defineAsyncComponent(() => import('bootstrap-vue-next').then(m => m.BPopover)),
-    CopyButton: defineAsyncComponent(() => import('./CopyButton.vue')),
+    AuthSchemeItem: () => import('./AuthSchemeItem.vue'),
+    BIconBoxArrowUpRight,
+    BIconDownload,
+    BIconEye,
+    BIconLock,
+    BListGroup,
+    BPopover,
+    BSpinner,
+    CopyButton: () => import('./CopyButton.vue'),
     Description,
+    Metadata: () => import('./Metadata.vue')
   },
   props: {
     data: {
@@ -86,19 +93,16 @@ export default {
       default: () => ([])
     }
   },
-  emits: ['show'],
   data() {
     return {
-      id: i++
+      id: i++,
+      loading: false
     };
   },
   computed: {
-    ...mapState(['downloads', 'pathPrefix', 'requestHeaders', 'buildTileUrlTemplate', 'useTileLayerAsFallback']),
+    ...mapState(['pathPrefix', 'requestHeaders', 'buildTileUrlTemplate', 'useTileLayerAsFallback']),
     ...mapGetters(['getRequestUrl']),
     ...mapGetters('auth', ['isLoggedIn']),
-    loading() {
-      return Boolean(this.downloads[this.href]);
-    },
     requiresAuth() {
       return !this.isLoggedIn && this.auth.length > 0;
     },
@@ -151,6 +155,12 @@ export default {
       }
       return {};
     },
+    localFilename() {
+      if (typeof this.data['file:local_path'] === 'string') {
+        return URI(this.data['file:local_path']).filename();
+      }
+      return null;
+    },
     downloadProps() {
       if (this.hasDownloadButton && !this.useAltDownloadMethod) {
         const props = {
@@ -158,7 +168,7 @@ export default {
           target: '_blank',
         };
         if (!this.browserCanOpenFile) {
-          props.download = Utils.assetFilename(this.data);
+          props.download = this.localFilename || this.parsedHref.filename();
         }
         return props;
       }
@@ -204,12 +214,8 @@ export default {
       }
       return this.getRequestUrl(this.data.getAbsoluteUrl());
     },
-    assetWithHref() {
-      // Override asset href with absolute URL
-      // Clone asset so that we can change the href
-      const data = new Asset(this.data);
-      data.href = this.href;
-      return data;
+    parsedHref() {
+      return URI(this.href);
     },
     from() {
       return this.protocolName(this.protocol);
@@ -248,10 +254,93 @@ export default {
     async altDownload() {
       if (!window.isSecureContext) {
         window.location.href = this.href;
-        return;
       }
 
-      await this.$store.dispatch('altDownload', this.assetWithHref);
+      try {
+        this.loading = true;
+        const StreamSaver = require('streamsaver-js');
+
+        const uri = URI(window.origin.toString());
+        uri.path(Utils.removeTrailingSlash(this.pathPrefix) + '/mitm.html');
+        StreamSaver.mitm = uri.toString();
+
+        const link = Object.assign({}, this.data, {href: this.href});
+        const options = stacRequestOptions(this.$store, link);
+
+        // Convert from axios to fetch
+        const url = options.url;
+        delete options.url;
+        if (typeof options.data !== 'undefined') {
+          options.body = options.data;
+          delete options.data;
+        }
+
+        //options.credentials = 'include';
+
+        // Use fetch because stacRequest uses axios
+        // and axios doesn't support responseType: 'stream'
+        const res = await fetch(url, options);
+        // todo: use getErrorMessage / getErrorCode instead?
+        if (res.status >= 400) {
+          let msg;
+          switch(res.status) {
+            case 401:
+              msg = this.$t('errors.unauthorized');
+              break;
+            case 403:
+              msg = this.$t('errors.authFailed');
+              break;
+            case 404:
+              msg = this.$t('errors.notFound');
+              break;
+            case 500:
+              msg = this.$t('errors.serverError');
+              break;
+            default:
+              msg = this.$t('errors.networkError');
+              break;
+          }
+          throw new Error(msg);
+        }
+
+        let filename = this.localFilename;
+        if (!this.localFilename) {
+          const contentDisposition = res.headers.get('content-disposition');
+          if (typeof contentDisposition === 'string') {
+            const parts = contentDisposition.match(/filename=(?:"|)([^"]+)(?:"|)(?:;|$)/);
+            if (parts) {
+              filename = parts[1];
+            }
+          }
+        }
+        if (!filename) {
+          filename = this.parsedHref.filename();
+        }
+        const fileStream = StreamSaver.createWriteStream(filename);
+
+        // Prevent the user from leaving the page while the download is in progress
+        // As this is not a normal download a user need to stay on the page for the download to complete
+        window.addEventListener('unload', () => {
+          if (this.loading) {
+            fileStream.abort();
+          }
+        });
+        window.addEventListener('beforeunload', (evt) => {
+          if (this.loading) {
+            evt.preventDefault();
+          }
+        });
+
+        await res.body.pipeTo(fileStream);
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          // When the download was aborted, we don't want to show an error
+          return;
+        }
+        this.$store.commit('showGlobalError', { error });
+      } finally {
+        this.loading = false;
+      }
     },
     protocolName(protocol) {
       if (typeof protocol !== 'string') {
@@ -260,12 +349,11 @@ export default {
       switch(protocol.toLowerCase()) {
         case 's3':
           try {
-            const parsed = URI(this.href);
-            const key = `protocol.s3.${parsed.domain()}`;
+            const key = `protocol.s3.${this.parsedHref.domain()}`;
             if (this.$te(key)) {
               return this.$t(key);
             }
-          } catch {
+          } catch (e) {
             // Fall back to the default
           }
           return this.$t('protocol.s3.default');
@@ -284,8 +372,12 @@ export default {
       return '';
     },
     show() {
+      // Override asset href with absolute URL
+      // Clone asset so that we can change the href
+      const data = new Asset(this.data, this.data.getKey(), this.data.getContext());
+      data.href = this.href;
       // todo: can we use data.getAbsoluteUrl in all places where we handle the event in favor of the cloning/updating here?
-      this.$emit('show', this.assetWithHref);
+      this.$emit('show', data);
     },
     handleAuthButton() {
       if (this.auth.length === 1) {
@@ -300,10 +392,7 @@ export default {
       else {
         const name = this.$t(`authentication.schemeTypes.${method.type}`, method);
         const message = this.$t('authentication.unsupportedLong', {method: name});
-        this.$store.commit('showGlobalError', {
-          error: new Error(message),
-          message: this.$t('authentication.unsupported')
-        });
+        this.$root.$emit('error', new Error(message), this.$t('authentication.unsupported'));
       }
     }
   }

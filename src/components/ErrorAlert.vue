@@ -21,9 +21,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-
-export default defineComponent({
+export default {
   name: 'ErrorAlert',
   props: {
     message: {
@@ -35,11 +33,17 @@ export default defineComponent({
       default: ''
     },
     error: {
-      type: [Object, Error],
+      type: [
+        Object,
+        Error
+      ],
       default: null
     },
     id: {
-      type: [String, Number],
+      type: [
+        String,
+        Number
+      ],
       default: null
     },
     url: {
@@ -50,9 +54,8 @@ export default defineComponent({
       type: Boolean,
       default: false
     }
-  },
-  emits: ['close']
-});
+  }
+};
 </script>
 
 <style lang="scss" scoped>

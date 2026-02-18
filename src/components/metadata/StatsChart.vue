@@ -8,7 +8,6 @@
 import { formatKey } from "@radiantearth/stac-fields/helper";
 import { extension } from "@radiantearth/stac-fields/interface";
 import { formatMediaType } from "@radiantearth/stac-fields/formatters";
-import StacFieldsMixin from "../StacFieldsMixin";
 import Utils from "../../utils";
 
 import { Bar, Pie } from 'vue-chartjs';
@@ -31,9 +30,6 @@ export default {
     Bar,
     Pie
   },
-  mixins: [
-    StacFieldsMixin({ formatMediaType })
-  ],
   props: {
     data: {
       type: Object,
@@ -112,7 +108,7 @@ export default {
             break;
           }
           case 'assets':
-            label = this.formatMediaType(id);
+            label = formatMediaType(id);
             break;
           default:
             label = id;

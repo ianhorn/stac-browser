@@ -11,10 +11,9 @@
 import Item from './Item.vue';
 import Catalog from './Catalog.vue';
 import { mapGetters } from "vuex";
-import { defineComponent } from 'vue';
 import BrowseMixin from './BrowseMixin';
 
-export default defineComponent({
+export default {
   name: "Browse",
   components: {
     Catalog,
@@ -34,5 +33,5 @@ export default defineComponent({
       }
     }
   }
-});
+};
 </script>

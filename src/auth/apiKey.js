@@ -3,12 +3,12 @@ import i18n from '../i18n';
 
 export default class ApiKey extends Auth {
 
-  constructor(router, options, changeListener) {
-    super(router, options, changeListener);
+  constructor(options, changeListener, router) {
+    super(options, changeListener, router);
   }
 
   getButtonTitle() {
-  return i18n.global.t('authentication.button.title');
+    return i18n.t('authentication.button.title');
   }
 
   getComponent() {
@@ -22,7 +22,7 @@ export default class ApiKey extends Auth {
   }
 
   async logout(/*credentials*/) {
-    if (this.router.currentRoute.value.name !== 'logout') {
+    if (this.router.currentRoute.name !== 'logout') {
       this.router.push('/auth/logout');
     }
     return true;

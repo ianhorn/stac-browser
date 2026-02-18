@@ -20,7 +20,6 @@ export default {
       default: "bottom"
     }
   },
-  emits: ['paginate'],
   methods: {
     paginate(link) {
       this.$emit('paginate', link, this.placement);

@@ -10,9 +10,13 @@
 import Point from 'ol/geom/Point';
 import ControlMixin from './ControlMixin';
 import { fromLonLat } from 'ol/proj';
+import { BIconPinMapFill } from 'bootstrap-vue';
 
 export default {
   name: 'UserLocationControl',
+  components: {
+    BIconPinMapFill
+  },
   mixins: [
     ControlMixin
   ],
@@ -32,10 +36,7 @@ export default {
             const point = new Point(coords);
             view.fit(point, {maxZoom: this.maxZoom});
           },
-          error => this.$store.commit('showGlobalError', {
-            error,
-            message: error.message
-          }),
+          error => this.$root.$emit('error', error, error.message),
           {
             maximumAge: Infinity
           }

@@ -1,21 +1,19 @@
 <template>
-  <component :is="component" class="stac-link" :id="id" :title="tooltip" v-bind="attributes">
-    <img v-if="icon && !hideIcon" :src="icon.getAbsoluteUrl()" :alt="icon.title" :title="icon.title" class="icon me-2">
+  <component :is="component" class="stac-link" v-bind="attributes" :id="id" :title="tooltip">
+    <img v-if="icon && !hideIcon" :src="icon.getAbsoluteUrl()" :alt="icon.title" :title="icon.title" class="icon mr-2">
     <span class="title">{{ displayTitle }}</span>
   </component>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
 import { mapState, mapGetters } from 'vuex';
-import { BButton } from 'bootstrap-vue-next';
 import { stacBrowserNavigatesTo } from "../rels";
 import Utils from '../utils';
 import { getDisplayTitle } from '../models/stac';
 import { STAC } from 'stac-js';
 import URI from 'urijs';
 
-export default defineComponent({
+export default {
   name: "StacLink",
   props: {
     data: {
@@ -115,7 +113,7 @@ export default defineComponent({
           rel: this.link.rel,
         };
         if (this.id) {
-          // Add tab index when an ID is given for popovers to make it clickable on MacOS (#655)
+          // Add tab index when an ID is given for popoversto make it clickable on MacOS (#655)
           obj.tabindex = 0;
         }
         return obj;
@@ -123,7 +121,7 @@ export default defineComponent({
     },
     component() {
       if (this.button) {
-        return BButton;
+        return 'b-button';
       }
       return this.isStacBrowserLink ? 'router-link' : 'a';
     },
@@ -136,9 +134,8 @@ export default defineComponent({
         else {
           href = this.toBrowserPath(this.link.href);
         }
-        // Normalize to start with a slash for router-link navigation
         if (!href.startsWith('/')) {
-          href = '/' + (href || '');
+          href = '/' + href;
         }
 
         // Add private query parameters to links: https://github.com/radiantearth/stac-browser/issues/142
@@ -178,5 +175,5 @@ export default defineComponent({
       return Utils.isObject(o) && !(o instanceof STAC);
     }
   }
-});
+};
 </script>

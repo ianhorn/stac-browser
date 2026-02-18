@@ -2,10 +2,9 @@ import ErrorAlert from '../components/ErrorAlert.vue';
 import Loading from '../components/Loading.vue';
 import { getErrorCode, getErrorMessage } from '../store/utils';
 import URI from 'urijs';
-import { defineComponent } from 'vue';
 import { mapState, mapGetters } from 'vuex';
 
-export default defineComponent({
+export default {
   components: {
     ErrorAlert,
     Loading
@@ -45,4 +44,4 @@ export default defineComponent({
       }
     }
   }
-});
+};

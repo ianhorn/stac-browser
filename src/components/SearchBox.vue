@@ -1,16 +1,21 @@
 <template>
   <div class="vue-component search-box">
-    <b-icon-search class="icon" />
+    <span class="icon"><b-icon-search /></span>
     <b-form-input type="search" v-model.trim="searchTerm" :placeholder="placeholder || $t('search.placeholder')" />
   </div>
 </template>
 
 <script>
+import { BFormInput, BIconSearch } from 'bootstrap-vue';
 
 export default {
   name: 'SearchBox',
+  components: {
+    BFormInput,
+    BIconSearch
+  },
   props: {
-    modelValue: {
+    value: {
       type: String,
       default: ''
     },
@@ -19,18 +24,17 @@ export default {
       default: null
     }
   },
-  emits: ['update:modelValue'],
   data() {
     return {
-      searchTerm: this.modelValue
+      searchTerm: this.value
     };
   },
   watch: {
-    modelValue(newValue) {
-      this.searchTerm = newValue;
-    },
     searchTerm(newValue) {
-      this.$emit('update:modelValue', newValue);
+      if (newValue.length < this.minLength) {
+        newValue = '';
+      }
+      this.$emit('input', newValue);
     }
   }
 };
@@ -46,30 +50,26 @@ export default {
     margin: 0;
   }
   input {
-    min-height: 2.75em;
-    padding: 0.75em 0.75em;
-    padding-left: 2.75em;
+    min-height: 1.5em;
+    padding: 0.25em 0.3em;
+    padding-left: 1.9em;
     z-index: 1;
     display: inline-block;
     border: 1px solid #ccc;
-    box-sizing: border-box;
+    box-sizing: content-box;
     background-color: #fff;
-    width: 100%;
+    width: calc(100% - 1.9em - 0.25em - 2px);
   }
   .icon {
-    height: 1em;
+    height: 1.5em;
     user-select: none;
-    margin-left: 0.75em;
+    margin-top: -0.75em;
+    margin-left: 0.3em;
     width: 1em;
     z-index: 2;
     position: absolute;
     top: 50%;
     left: 0;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
   }
 }
 </style>

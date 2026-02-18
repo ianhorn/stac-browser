@@ -1,9 +1,5 @@
 import { mapState } from 'vuex';
 
-import Registry from '@radiantearth/stac-fields/registry';
-import contentType from 'content-type';
-Registry.addDependency('content-type', contentType);
-
 export default functions => {
   let mixin = {
     computed: {

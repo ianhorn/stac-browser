@@ -1,25 +1,23 @@
 <template>
   <section class="assets mb-4">
     <h2 v-if="displayTitle">{{ displayTitle }}</h2>
-    <b-accordion>
+    <div class="accordion" role="tablist">
       <Asset
-        v-for="asset in assets" :asset="asset" :expand="expand"
+        v-for="asset in assets" :asset="asset" :expand="expand" :context="context"
         :definition="definition" :shown="shownKeys.includes(asset.getKey())"
         :key="asset.getKey()" @show="show"
       />
-    </b-accordion>
+    </div>
   </section>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
-import { BAccordion } from 'bootstrap-vue-next';
+import Asset from './Asset.vue';
 
 export default {
   name: 'Assets',
   components: {
-    Asset: defineAsyncComponent(() => import('./Asset.vue')),
-    BAccordion
+    Asset
   },
   props: {
     assets: {
@@ -43,7 +41,6 @@ export default {
       default: null
     }
   },
-  emits: ['showAsset'],
   computed: {
     shownKeys() {
       return this.shown
@@ -53,7 +50,7 @@ export default {
     displayTitle() {
       if (this.title === null) {
         let langKey = this.definition ? 'assets.inItems' : 'stacAssets';
-        return this.$t(langKey, this.assets.length);
+        return this.$tc(langKey, this.assets.length);
       }
       else {
         return this.title;

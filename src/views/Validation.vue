@@ -40,17 +40,14 @@
 
 <script>
 import { mapState } from 'vuex';
-import { defineComponent } from 'vue';
 import validateSTAC from 'stac-node-validator';
 import BrowseMixin from './BrowseMixin.js';
 import { STAC } from 'stac-js';
-import { BCardGroup } from 'bootstrap-vue-next';
 import ValidationResult from '../components/ValidationResult.vue';
 
-export default defineComponent({
+export default {
   name: "Validation",
   components: {
-    BCardGroup,
     ValidationResult
   },
   mixins: [
@@ -105,8 +102,7 @@ export default defineComponent({
       this.report = null;
       if (this.data instanceof STAC) {
         try {
-          const stac = this.data._original || this.data.toJSON();
-          this.report = await validateSTAC(stac, {});
+          this.report = await validateSTAC(this.data);
         } catch (error) {
           this.internalError = error;
         } finally {
@@ -115,7 +111,7 @@ export default defineComponent({
       }
     }
   }
-});
+};
 </script>
 
 <style lang="scss" scoped>
@@ -125,7 +121,7 @@ export default defineComponent({
 </style>
 
 <style lang="scss">
-@import 'bootstrap/scss/mixins';
+@import '~bootstrap/scss/mixins';
 @import "../theme/variables.scss";
 
 #stac-browser .validation .results.card-columns {

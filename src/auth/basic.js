@@ -4,8 +4,8 @@ import Utils from "../utils";
 
 export default class BasicAuth extends Auth {
 
-  constructor(router, options, changeListener) {
-    super(router, options, changeListener);
+  constructor(options, changeListener, router) {
+    super(options, changeListener, router);
   }
 
   getComponent() {
@@ -19,11 +19,11 @@ export default class BasicAuth extends Auth {
   }
 
   getButtonTitle() {
-  return i18n.global.t('authentication.button.title');
+    return i18n.t('authentication.button.title');
   }
 
   async logout(/*credentials*/) {
-    if (this.router.currentRoute.value.name !== 'logout') {
+    if (this.router.currentRoute.name !== 'logout') {
       this.router.push('/auth/logout');
     }
     return true;

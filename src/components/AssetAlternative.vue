@@ -1,16 +1,15 @@
 <template>
-  <div class="asset-alternative">
-    <h4 class="mb-4" v-html="fileFormat" />
+  <component :is="component">
+    <b-card-title><span v-html="fileFormat" /></b-card-title>
     <HrefActions isAsset :data="asset" :shown="shown" @show="show" :auth="auth" />
-    <div class="mt-4" v-if="asset.description">
+    <b-card-text class="mt-4" v-if="asset.description">
       <Description :description="asset.description" compact />
-    </div>
-    <MetadataGroups class="mt-4" :data="resolvedAsset" :context="context" :ignoreFields="ignore" title="" type="Asset" />
-  </div>
+    </b-card-text>
+    <Metadata class="mt-4" :data="resolvedAsset" :context="context" :ignoreFields="ignore" title="" type="Asset" />
+  </component>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
 import { formatMediaType } from '@radiantearth/stac-fields/formatters';
 import Description from './Description.vue';
 import HrefActions from './HrefActions.vue';
@@ -24,7 +23,7 @@ export default {
   components: {
     Description,
     HrefActions,
-    MetadataGroups: defineAsyncComponent(() => import('./MetadataGroups.vue'))
+    Metadata: () => import('./Metadata.vue')
   },
   mixins: [
     StacFieldsMixin({ formatMediaType })
@@ -43,7 +42,6 @@ export default {
       default: false
     }
   },
-  emits: ['show'],
   data() {
     return {
       ignore: [
@@ -75,19 +73,14 @@ export default {
     },
     resolvedAsset() {
       if (Array.isArray(this.asset['storage:refs'])) {
-        const asset = new Asset(this.asset);
+        const asset = new Asset(this.asset, this.asset.getKey(), this.context);
         asset['storage:schemes'] = this.resolveStorage(this.asset);
         return asset;
       }
       return this.asset;
     },
-    tileRendererType() {
-      if (this.buildTileUrlTemplate && !this.useTileLayerAsFallback) {
-        return 'server';
-      }
-      else {
-        return 'client';
-      }
+    component() {
+      return this.hasAlternatives ? 'div' : 'b-card-body';
     },
     fileFormat() {
       if (typeof this.asset.type === "string" && this.asset.type.length > 0) {
@@ -118,9 +111,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.asset-alternative {
-  padding: 1rem;
-}
-</style>

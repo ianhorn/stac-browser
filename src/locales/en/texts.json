@@ -277,7 +277,6 @@
     "notSupported": "Item Search is not supported by the API.",
     "placeholder": "Search...",
     "selectCollections": "Select one or multiple collections...",
-    "selectDateRange": "Select date range",
     "selectForItemSearch": "Select for Item Search",
     "spatialExtent": "Spatial Extent",
     "tabs": {

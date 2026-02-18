@@ -4,15 +4,14 @@
     <b-card-group columns :class="`count-${formattedData.length}`">
       <MetadataGroup
         v-for="group in formattedData"
-        :key="group.extension"
         v-bind="group"
+        :key="group.extension"
       />
     </b-card-group>
   </section>
 </template>
 
 <script>
-import { BCardGroup } from 'bootstrap-vue-next';
 import {
   formatAsset,
   formatCatalog,
@@ -23,23 +22,18 @@ import {
   formatProvider,
   formatSummaries,
 } from "@radiantearth/stac-fields";
-import StacFieldsMixin from './StacFieldsMixin';
 import MetadataGroup from "./metadata/MetadataGroup.vue";
 import { isoDuration } from "@musement/iso-duration";
 import { mapState } from "vuex";
 // Register custom fields for the metadata rendering
- 
-import "../../fields.config";
+// eslint-disable-next-line
+import __ from "../../fields.config";
 
 export default {
-  name: "MetadataGroups",
+  name: "Metadata",
   components: {
-    BCardGroup,
     MetadataGroup,
   },
-  mixins: [
-    StacFieldsMixin({}),
-  ],
   props: {
     data: {
       type: Object,

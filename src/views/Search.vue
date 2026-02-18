@@ -5,13 +5,13 @@
     <b-row v-else>
       <b-col class="left">
         <b-tabs v-model="activeSearch">
-          <b-tab v-if="collectionSearch" :title="$t('search.tabs.collections')" id="search-collections-tab">
+          <b-tab v-if="collectionSearch" :title="$t('search.tabs.collections')">
             <SearchFilter
               :parent="parent" title="" :value="collectionFilters" type="Collections"
               @input="setFilters"
             />
           </b-tab>
-          <b-tab v-if="itemSearch" :title="$t('search.tabs.items')" id="search-items-tab">
+          <b-tab v-if="itemSearch" :title="$t('search.tabs.items')">
             <SearchFilter
               :parent="parent" title="" :value="itemFilters" type="Global"
               @input="setFilters"
@@ -27,7 +27,7 @@
         <b-alert v-else-if="results.length === 0" variant="warning" show>{{ $t('search.noItemsFound') }}</b-alert>
         <template v-else>
           <div id="search-map" v-if="resultCollection">
-            <MapView :stac="parent" :children="resultCollection" onfocusOnly popover />
+            <Map :stac="parent" :children="resultCollection" onfocusOnly popover />
           </div>
           <Catalogs
             v-if="isCollectionSearch" :catalogs="results" collectionsOnly
@@ -39,7 +39,7 @@
                 <b-button v-if="itemSearch" variant="outline-primary" :pressed="selectedCollections[slot.data.id]" @click="selectForItemSearch(slot.data)">
                   <b-icon-check-square v-if="selectedCollections[slot.data.id]" />
                   <b-icon-square v-else />
-                  <span class="ms-2">{{ $t('search.selectForItemSearch') }}</span>
+                  <span class="ml-2">{{ $t('search.selectForItemSearch') }}</span>
                 </b-button>
                 <StacLink :button="{variant: 'outline-primary', disabled: !canFilterItems(slot.data)}" :data="slot.data" :title="$t('search.filterCollection')" :state="{itemFilterOpen: 1}" />
               </b-button-group>
@@ -56,36 +56,37 @@
     </b-row>
     <b-alert v-if="selectedCollectionCount > 0" show variant="dark" class="selected-collections-action">
       <b-button @click="openItemSearch" variant="primary" size="lg">
-        {{ $t('search.useInItemSearch', selectedCollectionCount, {count: selectedCollectionCount}) }}
+        {{ $tc('search.useInItemSearch', selectedCollectionCount, {count: selectedCollectionCount}) }}
       </b-button>
     </b-alert>
   </main>
 </template>
 
 <script>
+import { mapGetters, mapState } from "vuex";
 import Utils from '../utils';
 import SearchFilter from '../components/SearchFilter.vue';
 import Loading from '../components/Loading.vue';
 import ErrorAlert from '../components/ErrorAlert.vue';
 import { getDisplayTitle, createSTAC, CollectionCollection, ItemCollection } from '../models/stac';
 import { STAC } from 'stac-js';
-import { defineComponent, defineAsyncComponent } from 'vue';
+import { BIconCheckSquare, BIconSquare, BTabs, BTab } from 'bootstrap-vue';
 import { getErrorCode, getErrorMessage, processSTAC, stacRequest } from '../store/utils';
-import { mapGetters, mapState } from "vuex";
-import { BTab, BTabs } from 'bootstrap-vue-next';
 
-export default defineComponent({
+export default {
   name: "Search",
   components: {
-    Catalogs: defineAsyncComponent(() => import('../components/Catalogs.vue')),
-    BTabs,
+    BIconCheckSquare,
+    BIconSquare,
     BTab,
+    BTabs,
+    Catalogs: () => import('../components/Catalogs.vue'),
     ErrorAlert,
     Loading,
+    Items: () => import('../components/Items.vue'),
+    Map: () => import('../components/Map.vue'),
     SearchFilter,
-    Items: defineAsyncComponent(() => import('../components/Items.vue')),
-    MapView: defineAsyncComponent(() => import('../components/MapView.vue')),
-    StacLink: defineAsyncComponent(() => import('../components/StacLink.vue'))
+    StacLink: () => import('../components/StacLink.vue')
   },
   props: {
     loadParent: {
@@ -103,7 +104,7 @@ export default defineComponent({
       data: null,
       itemFilters: {},
       collectionFilters: {},
-      activeSearch: undefined,
+      activeSearch: 0,
       selectedCollections: {}
     };
   },
@@ -181,7 +182,7 @@ export default defineComponent({
       return this.isCollectionSearch ? this.collectionFilters : this.itemFilters;
     },
     isCollectionSearch() {
-      return this.collectionSearch && this.activeSearch === 'search-collections-tab';
+      return this.collectionSearch && this.activeSearch === 0;
     },
     pageDescription() {
       let title = getDisplayTitle([this.collectionLink, this.parentLink, this.root], this.catalogTitle);
@@ -228,16 +229,16 @@ export default defineComponent({
   },
   methods: {
     openItemSearch() {
-      this.itemFilters.collections = Object.keys(this.selectedCollections);
-      this.activeSearch = 'search-items-tab';
+      this.$set(this.itemFilters, 'collections', Object.keys(this.selectedCollections));
+      this.activeSearch = 1;
       this.selectedCollections = {};
     },
     selectForItemSearch(collection) {
       if (this.selectedCollections[collection.id]) {
-        delete this.selectedCollections[collection.id];
+        this.$delete(this.selectedCollections, collection.id);
       }
       else {
-        this.selectedCollections[collection.id] = true;
+        this.$set(this.selectedCollections, collection.id, true);
       }
     },
     canFilterItems(data) {
@@ -297,11 +298,11 @@ export default defineComponent({
       });
     }
   }
-});
+};
 </script>
 
 <style lang="scss">
-@import 'bootstrap/scss/mixins';
+@import '~bootstrap/scss/mixins';
 @import "../theme/variables.scss";
 
 #stac-browser {
@@ -327,7 +328,7 @@ export default defineComponent({
   }
 
   .left {
-    min-width: 420px;
+    min-width: 350px;
     flex-basis: 40%;
   }
   .right {

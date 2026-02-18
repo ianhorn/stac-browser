@@ -15,7 +15,6 @@
 <script>
 import EntryMixin from './EntryMixin';
 import Utils from '../../utils';
-import { defineAsyncComponent } from 'vue';
 
 const FORCE_TABLE = [
   'languages',
@@ -27,7 +26,7 @@ const FORCE_TABLE = [
 export default {
   name: "MetadataEntry",
   components: {
-    MetadataTable: defineAsyncComponent(() => import('./MetadataTable.vue'))
+    MetadataTable: () => import('./MetadataTable.vue')
   },
   mixins: [
     EntryMixin

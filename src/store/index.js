@@ -1,16 +1,18 @@
-import { createStore } from "vuex";
+import Vue from "vue";
+import Vuex from "vuex";
 
 import URI from "urijs";
 
-import i18n, { getDataLanguages, translateFields, executeCustomFunctions, loadMessages } from '../i18n';
+import i18n, { getDataLanguages } from '../i18n';
 import Utils, { BrowserError } from '../utils';
 import { addMissingChildren, getDisplayTitle, createSTAC } from '../models/stac';
 import { CatalogLike, STAC } from 'stac-js';
 
 import auth from './auth.js';
-import { addQueryIfNotExists, hasAuthority, isAuthenticationError, Loading, processSTAC, stacRequest, stacRequestOptions } from './utils';
+import { addQueryIfNotExists, hasAuthority, isAuthenticationError, Loading, processSTAC, stacRequest } from './utils';
 import { getBest } from 'stac-js/src/locales';
-import fieldsI18n from '@radiantearth/stac-fields/I18N';
+import I18N from '@radiantearth/stac-fields/I18N';
+import { translateFields, executeCustomFunctions, loadMessages } from '../i18n';
 import { TYPES } from "../components/ApiCapabilitiesMixin";
 import BrowserStorage from "../browser-store.js";
 
@@ -49,15 +51,14 @@ function getStore(config, router) {
     nextCollectionsLink: null
   });
 
-  return createStore({
-    strict: import.meta.env.NODE_ENV !== 'production',
+  return new Vuex.Store({
+    strict: process.env.NODE_ENV !== 'production',
     modules: {
       auth: auth(router)
     },
     state: Object.assign({}, config, localDefaults(), catalogDefaults(), {
       // Global settings
       database: {}, // STAC object, Error object or Loading object or Promise (when loading)
-      downloads: {},
       allowSelectCatalog: !config.catalogUrl,
       globalRequestQueryParameters: config.requestQueryParameters,
       uiLanguage: config.locale
@@ -405,25 +406,24 @@ function getStore(config, router) {
         }
       },
       languages(state, {uiLanguage, dataLanguage}) {
-        i18n.global.locale = uiLanguage;
         state.dataLanguage = dataLanguage || null;
         state.uiLanguage = uiLanguage || null;
       },
       setQueryParameter(state, { type, key, value }) {
         type = `${type}QueryParameters`;
         if (typeof value === 'undefined') {
-          delete state[type][key];
+          Vue.delete(state[type], key);
         }
         else {
-          state[type][key] = value;
+          Vue.set(state[type], key, value);
         }
       },
       setRequestHeader(state, { key, value }) {
         if (typeof value === 'undefined') {
-          delete state.requestHeaders[key];
+          Vue.delete(state.requestHeaders, key);
         }
         else {
-          state.requestHeaders[key] = value;
+          Vue.set(state.requestHeaders, key, value);
         }
       },
       requestAuth(state, callback) {
@@ -442,10 +442,10 @@ function getStore(config, router) {
       },
       updateState(state, {type, value}) {
         if (value === null || typeof value === 'undefined') {
-          delete state.stateQueryParameters[type];
+          Vue.delete(state.stateQueryParameters, type);
         }
         else {
-          state.stateQueryParameters[type] = value;
+          Vue.set(state.stateQueryParameters, type, value);
         }
       },
       openCollapsible(state, { type, uid }) {
@@ -458,31 +458,25 @@ function getStore(config, router) {
       closeCollapsible(state, { type, uid }) {
         const idx = state.stateQueryParameters[type].indexOf(uid);
         if (idx > -1) {
-          state.stateQueryParameters[type].splice(idx, 1);
+          Vue.delete(state.stateQueryParameters[type], idx);
         }
-      },
-      startDownload(state, {href, fileStream}) {
-        state.downloads[href] = fileStream || true;
-      },
-      finishDownload(state, href) {
-        delete state.downloads[href];
       },
       updateLoading(state, { url, show }) {
         let data = state.database[url];
-        data.show = show || data.show;
+        Vue.set(data, 'show', show || data.show);
       },
       loading(state, { url, loading }) {
-        state.database[url] = loading;
+        Vue.set(state.database, url, loading);
         if (loading.show) {
           state.loading = true;
           state.url = url;
         }
       },
       loaded(state, { url, data }) {
-        state.database[url] = processSTAC(state, data);
+        Vue.set(state.database, url, processSTAC(state, data));
       },
       clear(state, url) {
-        delete state.database[url];
+        Vue.delete(state.database, url);
       },
       resetCatalog(state, clearAll) {
         Object.assign(state, catalogDefaults());
@@ -513,13 +507,13 @@ function getStore(config, router) {
         if (status instanceof Loading && status.show) {
           state.loading = false;
           state.page = () => ({
-            title: i18n.global.t('errors.title')
+            title: i18n.t('errors.title')
           });
         }
         if (!(error instanceof Error)) {
           error = new Error(error);
         }
-        state.database[url] = error;
+        Vue.set(state.database, url, error);
       },
       queue(state, url) {
         state.queue.push(url);
@@ -543,10 +537,10 @@ function getStore(config, router) {
       },
       toggleApiItemsLoading(state, collectionId = '') {
         if (state.apiItemsLoading[collectionId]) {
-          delete state.apiItemsLoading[collectionId];
+          Vue.delete(state.apiItemsLoading, collectionId);
         }
         else {
-          state.apiItemsLoading[collectionId] = true;
+          Vue.set(state.apiItemsLoading, collectionId, true);
         }
       },
       setApiItems(state, { data, stac, show }) {
@@ -651,8 +645,8 @@ function getStore(config, router) {
         await loadMessages(uiLanguage);
 
         // Update stac-fields
-        fieldsI18n.setLocales([uiLanguage, cx.state.fallbackLocale]);
-        fieldsI18n.setTranslator(translateFields);
+        I18N.setLocales([uiLanguage, cx.state.fallbackLocale]);
+        I18N.setTranslator(translateFields);
 
         // Execute other custom functions required to localize
         await executeCustomFunctions(uiLanguage);
@@ -701,7 +695,7 @@ function getStore(config, router) {
       },
       async tryLogin(cx, {url, action}) {
         cx.commit('clear', url);
-        cx.commit('errored', { url, error: new BrowserError(i18n.global.t('authentication.unauthorized')) });
+        cx.commit('errored', { url, error: new BrowserError(i18n.t('authentication.unauthorized')) });
         if (action) {
           cx.commit('auth/addAction', action);
         }
@@ -740,7 +734,7 @@ function getStore(config, router) {
           try {
             const response = await stacRequest(cx, url);
             if (!Utils.isObject(response.data)) {
-              throw new BrowserError(i18n.global.t('errors.invalidJsonObject'));
+              throw new BrowserError(i18n.t('errors.invalidJsonObject'));
             }
             data = createSTAC(response.data, url, path);
             cx.commit('loaded', { url, data });
@@ -785,7 +779,7 @@ function getStore(config, router) {
             await cx.dispatch('loadNextApiCollections', args);
           } catch (error) {
             cx.commit('showGlobalError', {
-              message: i18n.global.t('errors.loadApiCollectionsFailed'),
+              message: i18n.t('errors.loadApiCollectionsFailed'),
               error
             });
           }
@@ -797,7 +791,7 @@ function getStore(config, router) {
             await cx.dispatch('loadApiItems', args);
           } catch (error) {
             cx.commit('showGlobalError', {
-              message: i18n.global.t('errors.loadApiItemsFailed'),
+              message: i18n.t('errors.loadApiItemsFailed'),
               error
             });
           }
@@ -842,7 +836,7 @@ function getStore(config, router) {
 
           let response = await stacRequest(cx, link);
           if (!Utils.isObject(response.data) || !Array.isArray(response.data.features)) {
-            throw new BrowserError(i18n.global.t('errors.invalidStacItems'));
+            throw new BrowserError(i18n.t('errors.invalidStacItems'));
           }
           else {
             response.data.features = response.data.features.map(item => {
@@ -889,8 +883,7 @@ function getStore(config, router) {
                   return data;
                 }
                 else {
-                  let itemPath = cx.getters.toBrowserPath(url);
-                  data = createSTAC(item, url, itemPath);
+                  data = createSTAC(item, url, cx.getters.toBrowserPath(url));
                   data._incomplete = true;
                   cx.commit('loaded', { data, url });
                   return data;
@@ -940,7 +933,7 @@ function getStore(config, router) {
         try {
           let response = await stacRequest(cx, link);
           if (!Utils.isObject(response.data) || !Array.isArray(response.data.collections)) {
-            throw new BrowserError(i18n.global.t('errors.invalidStacCollections'));
+            throw new BrowserError(i18n.t('errors.invalidStacCollections'));
           }
           else {
             response.data.collections = response.data.collections.map(collection => {
@@ -969,8 +962,7 @@ function getStore(config, router) {
                 return data;
               }
               else {
-                let collectionPath = cx.getters.toBrowserPath(url);
-                data = createSTAC(collection, url, collectionPath);
+                data = createSTAC(collection, url, cx.getters.toBrowserPath(url));
                 data._incomplete = true;
                 cx.commit('loaded', { data, url });
                 return data;
@@ -998,7 +990,7 @@ function getStore(config, router) {
       async retryAfterAuth(cx) {
         let errorFn = error => cx.commit('showGlobalError', {
           error,
-          message: i18n.global.t('errors.authFailed')
+          message: i18n.t('errors.authFailed')
         });
 
         for (let callback of cx.state.doAuth) {
@@ -1011,66 +1003,7 @@ function getStore(config, router) {
             errorFn(error);
           }
         }
-      },
-      async altDownload(cx, link) {
-        try {
-          cx.commit('startDownload', {href: link.href});
-          const StreamSaver = (await import('streamsaver-js')).default;
-
-          const uri = URI(window.origin.toString());
-          uri.path(Utils.removeTrailingSlash(cx.state.pathPrefix) + '/mitm.html');
-          StreamSaver.mitm = uri.toString();
-
-          const options = stacRequestOptions(cx, link);
-
-          // Convert from axios to fetch
-          const url = options.url;
-          delete options.url;
-          if (typeof options.data !== 'undefined') {
-            options.body = options.data;
-            delete options.data;
-          }
-
-          // Use fetch because stacRequest uses axios
-          // and axios doesn't support responseType: 'stream'
-          const res = await fetch(url, options);
-          // todo: use getErrorMessage / getErrorCode instead?
-          if (res.status >= 400) {
-            let msg;
-            switch(res.status) {
-              case 401:
-                msg = i18n.global.t('errors.unauthorized');
-                break;
-              case 403:
-                msg = i18n.global.t('errors.authFailed');
-                break;
-              case 404:
-                msg = i18n.global.t('errors.notFound');
-                break;
-              case 500:
-                msg = i18n.global.t('errors.serverError');
-                break;
-              default:
-                msg = i18n.global.t('errors.networkError');
-                break;
-            }
-            throw new Error(msg);
-          }
-
-          const filename = Utils.assetFilename(link, res);
-          const fileStream = StreamSaver.createWriteStream(filename);
-          cx.commit('startDownload', {href: link.href, fileStream});
-          await res.body.pipeTo(fileStream);
-        } catch (error) {
-          if (error instanceof DOMException && error.name === 'AbortError') {
-            // When the download was aborted, we don't want to show an error
-            return;
-          }
-          cx.commit('showGlobalError', { error });
-        } finally {
-          cx.commit('finishDownload', link.href);
-        }
-      },
+      }
     },
   });
 }

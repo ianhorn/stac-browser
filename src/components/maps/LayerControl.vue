@@ -1,9 +1,9 @@
 <template>
   <div class="ol-layercontrol ol-unselectable ol-control" style="pointer-events: auto;">
-    <button v-if="id" :id="id"><b-icon-layers-fill /></button>
+    <button :id="id"><b-icon-layers-fill /></button>
     <b-popover
-      v-if="id" click placement="top" @show="update"
-      :target="id" teleport-to="#stac-browser" :boundary-padding="10"
+      v-if="id" placement="top" triggers="click" @show="update"
+      :target="id" container="#stac-browser"
     >
       <div class="layercontrol">
         <section>
@@ -17,7 +17,7 @@
         </section>
         <section v-if="hasLayers">
           <h5>{{ $t('mapping.layers.title') }}</h5>
-          <LayerControlGroup :map="map" :group="layerGroup" />
+          <LayerControlGroup :map="map" :group="layerGroup" :maxZoom="maxZoom" />
         </section>
       </div>
     </b-popover>
@@ -25,17 +25,20 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
 import ControlMixin from './ControlMixin';
 import LayerControlMixin from './LayerControlMixin';
+import { BFormRadio, BFormRadioGroup, BIconLayersFill, BPopover } from 'bootstrap-vue';
 import Group from 'ol/layer/Group';
 import MapUtils from './mapUtils';
 
 export default {
   name: 'LayerControl',
   components: {
-    BPopover: defineAsyncComponent(() => import('bootstrap-vue-next').then(m => m.BPopover)),
-    LayerControlGroup: defineAsyncComponent(() => import('./LayerControlGroup.vue'))
+    BFormRadioGroup,
+    BFormRadio,
+    BIconLayersFill,
+    BPopover,
+    LayerControlGroup: () => import('./LayerControlGroup.vue')
   },
   mixins: [
     ControlMixin,

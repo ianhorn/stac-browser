@@ -4,13 +4,12 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { defineAsyncComponent } from 'vue';
 
 export default {
   name: 'Authentication',
   components: {
-    ApiKey: defineAsyncComponent(() => import('./auth/ApiKey.vue')),
-    Basic: defineAsyncComponent(() => import('./auth/Basic.vue'))
+    ApiKey: () => import('./auth/ApiKey.vue'),
+    Basic: () => import('./auth/Basic.vue')
   },
   computed: {
     ...mapGetters('auth', ['method', 'isLoggedIn']),

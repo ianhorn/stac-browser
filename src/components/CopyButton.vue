@@ -1,15 +1,13 @@
 <template>
-  <b-button class="copy-button" @click.prevent.stop="copy" :variant="copyColor" :title="$t('copy')" v-bind="buttonProps">
+  <b-button class="copy-button" @click.prevent.stop="copy" :variant="copyColor" v-bind="buttonProps" :title="$t('copy')">
     <component :is="copyIcon" />
     <slot />
   </b-button>
 </template>
 
 <script>
+import { BIconClipboard, BIconClipboardCheck, BIconClipboardX } from 'bootstrap-vue';
 import { Clipboard } from "v-clipboard";
-import BIconClipboard from '~icons/bi/clipboard';
-import BIconClipboardCheck from '~icons/bi/clipboard-check';
-import BIconClipboardX from '~icons/bi/clipboard-x';
 
 export default {
     name: "CopyButton",
@@ -53,13 +51,13 @@ export default {
         },
         copyIcon() {
             if (this.status === true) {
-                return BIconClipboardCheck;
+                return 'b-icon-clipboard-check';
             }
             else if (this.status === false) {
-                return BIconClipboardX;
+                return 'b-icon-clipboard-x';
             }
             else {
-                return BIconClipboard;
+                return 'b-icon-clipboard';
             }
         }
     },

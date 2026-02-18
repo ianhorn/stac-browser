@@ -1,6 +1,6 @@
-import Fields from '@radiantearth/stac-fields/fields-normalized.json' with { type: 'json' };
-import HardCodedFields from './fields_locales.json' with { type: 'json' };
-import fs from 'fs';
+const Fields = require('@radiantearth/stac-fields/fields-normalized.json');
+const HardCodedFields = require("./fields_locales.json");
+const fs = require('fs');
 
 const translatable = ["label", "explain", "unit"];
 const iterable = ["items", "properties"];
