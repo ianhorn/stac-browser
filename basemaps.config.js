@@ -1,18 +1,33 @@
 import { Collection } from './src/models/stac';
-import { STAC } from 'stac-js'
+import { STAC } from 'stac-js';
 
-// For documentation see https://github.com/radiantearth/stac-browser/blob/main/docs/basemaps.md
+// Basemaps configuration for STAC Browser v4
 
 const BASEMAPS = {
   earth: [
+    {
+      url: 'https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_TCM_Base_WGS84WM/MapServer/tile/{z}/{y}/{x}',
+      title: 'The Commonwealth Basemap',
+      is: 'XYZ',
+      attributions: '© <a href="https://registry.opendata.aws/kyfromabove/" target="_blank">KyFromAbove</a>',
+      tileSize: 256,
+      maxZoom: 21,
+      projection: "EPSG:3857",
+      visible: true,
+      zIndex: -1
+    },
+    // Bottom layer — OpenStreetMap
     {
       url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       is: 'XYZ',
       title: 'OpenStreetMap',
       attributions: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.',
-      projection: "EPSG:3857"
+      projection: "EPSG:3857",
+      visible: true,
+      zIndex: 0
     }
-  ],
+    ],
+
   europa: [
     {
       url: 'https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/jupiter/europa_simp_cyl.map',
@@ -24,8 +39,9 @@ const BASEMAPS = {
         FORMAT: 'image/png',
         LAYERS: 'GALILEO_VOYAGER'
       }
-    },
+    }
   ],
+
   mars: [
     {
       url: 'https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map',
@@ -39,6 +55,7 @@ const BASEMAPS = {
       }
     }
   ],
+
   moon: [
     {
       url: 'https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/earth/moon_simp_cyl.map',
@@ -51,34 +68,32 @@ const BASEMAPS = {
         LAYERS: 'LROC_WAC'
       }
     }
-  ],
+  ]
 };
 
-/**
- * 
- * @param {Object} stac The STAC object
- * @param {Object} i18n Vue I18N object
- * @returns {Array.<BasemapOptions>}
- */
 export default function configureBasemap(stac, i18n) {
   let targets;
+
   if (stac instanceof Collection) {
     targets = stac.getSummary('ssys:targets');
   }
+
   if (stac instanceof STAC && !targets) {
     targets = stac.getMetadata('ssys:targets');
   }
+
   if (!targets) {
     targets = ['earth'];
   }
 
   let layers = [];
+
   for (const target of targets) {
     const maps = BASEMAPS[target.toLowerCase()];
-    if (!Array.isArray(maps)) {
-      continue;
+    if (Array.isArray(maps)) {
+      layers = layers.concat(maps);
     }
-    layers = layers.concat(maps);
   }
+
   return layers;
-};
+}

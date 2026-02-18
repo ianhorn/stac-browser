@@ -1,7 +1,7 @@
 module.exports = {
-    catalogUrl: null,
-    catalogTitle: "STAC Browser",
-    catalogImage: null,
+    catalogUrl: "https://spved5ihrl.execute-api.us-west-2.amazonaws.com/",
+    catalogTitle: "",
+    catalogImage: "https://kygeonet.ky.gov/kygeonet.ico",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
     allowedDomains: [],
     detectLocaleFromBrowser: true,
@@ -35,7 +35,7 @@ module.exports = {
     displayOverview: true,
     buildTileUrlTemplate: null,
     getMapSourceOptions: null,
-    pathPrefix: "/",
+    pathPrefix: "/stac/",
     historyMode: "history",
     cardViewMode: "cards",
     cardViewSort: "asc",

@@ -30,7 +30,8 @@ const configFromFile = require(configFile);
 const mergedConfig = Object.assign(configFromFile, argv);
 
 const vueConfig = {
-  lintOnSave: process.env.NODE_ENV !== 'production',
+  // lintOnSave: process.env.NODE_ENV !== 'production',
+  lintOnSave: false,
   productionSourceMap: !mergedConfig.noSourceMaps,
   publicPath: mergedConfig.pathPrefix,
   chainWebpack: webpackConfig => {
