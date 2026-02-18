@@ -1,9 +1,9 @@
 export default {
     catalogUrl: "https://spved5ihrl.execute-api.us-west-2.amazonaws.com/",
     catalogTitle: "",
-    catalogImage: "./kygeonet.ico",
+    catalogImage: "https://kygeonet.ky.gov/kygeonet.ico",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
-    allowedDomains: [],
+    allowedDomains: ["*"],
     detectLocaleFromBrowser: true,
     storeLocale: true,
     locale: "en",
@@ -35,7 +35,7 @@ export default {
     displayOverview: true,
     buildTileUrlTemplate: null,
     getMapSourceOptions: null,
-    pathPrefix: "/",
+    pathPrefix: "/stac/",
     historyMode: "history",
     cardViewMode: "cards",
     cardViewSort: "asc",
