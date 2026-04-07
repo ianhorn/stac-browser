@@ -10,12 +10,18 @@ body {
 // header title 
 h1 {
     font-size: 150% !important;
-    color: #3d5c3d;
+    font-family: 'BellTopo Sans Regular', serif;
+}
 
+a {
+    color: #2f3b2f;
+    text-decoration: none;
+    background-color: transparent;
 }
 
 h2 {
-    color: black;
+    color: #3d5c3d;
+    font-family: 'BellTopo Sans Regular', serif;
 }
 
 p {
@@ -26,10 +32,11 @@ h4 {
     text-align: center;
 }
 
-// catalog-filter, .search-box {
-//     background-color: #f1f7fc;
-// }
+h4 a {
+    color: #0f1a0f;
+}
 
+// Searh bar
 .form-control {
     background-color: #f0f5f0 !important;
 }
@@ -44,4 +51,8 @@ card-img-wrapper {
     grid-template-rows: subgrid;
     grid-row: span 4;
     background-color: #f1f7fc;
+}
+
+.b-sidebar {
+    background: #ddeadd !important;
 }
