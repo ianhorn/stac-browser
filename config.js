@@ -1,7 +1,7 @@
 module.exports = {
     catalogUrl: "https://spved5ihrl.execute-api.us-west-2.amazonaws.com/",
-    catalogTitle: "",
-    catalogImage: "https://kygeonet.ky.gov/kygeonet.ico",
+    catalogTitle: "KyFromAbove STAC Catalog Explorer",
+    catalogImage: "https://kygeonet.ky.gov/dgi-logo-small.svg",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
     allowedDomains: [],
     detectLocaleFromBrowser: true,

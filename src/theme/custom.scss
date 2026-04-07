@@ -1,0 +1,31 @@
+// custom background color to match Boyd's catalog explorer
+body {
+    font-family: 'BellTopo Sans Regular', serif;
+    background: #ddeadd;
+    color: #050705;
+    font-size: 100%;
+}
+
+
+// header title 
+h1 {
+    font-size: 150% !important;
+    color: #3d5c3d;
+
+}
+
+h2 {
+    color: black;
+}
+
+p {
+    text-align: justify;
+}
+
+.search-box {
+    background-color: #f0f5f0;
+}
+
+.form-control {
+    background-color: #f0f5f0 !important;
+}
