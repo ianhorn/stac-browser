@@ -69,10 +69,8 @@
     <!-- Content (Item / Catalog) -->
     <router-view />
     <footer>
-      <ul v-if="Array.isArray(footerLinksFromVueX) && footerLinksFromVueX.length > 0" class="footer-links text-muted">
-        <li v-for="link in footerLinksFromVueX" :key="link.url">
-          <a :href="link.url" target="_blank">{{ $te(`footerLinks.${link.label}`) ? $t(`footerLinks.${link.label}`) : link.label }}</a>
-        </li>
+      <ul>
+          <a href="https://kygeonet.ky.gov/" target="_blank"><img src="https://kygeonet.ky.gov/dgi-logo.svg" alt="KY DGI" style="height:120px;width:auto;"></a>
       </ul>
       <i18n tag="small" path="poweredBy" class="poweredby text-muted">
         <template #link>

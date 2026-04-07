@@ -54,5 +54,5 @@ module.exports = {
     preprocessSTAC: null,
     authConfig: null,
     crs: {},
-    footerLinks: null
-};
+    footerLink: {}
+    };

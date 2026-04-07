@@ -22,10 +22,26 @@ p {
     text-align: justify;
 }
 
-.search-box {
-    background-color: #f0f5f0;
+h4 {
+    text-align: center;
 }
+
+// catalog-filter, .search-box {
+//     background-color: #f1f7fc;
+// }
 
 .form-control {
     background-color: #f0f5f0 !important;
+}
+
+card-img-wrapper {
+    background-color: #f1f7fc;   
+}
+
+
+#stac-browser .card-grid .catalog-card, #stac-browser .card-grid .item-card, #stac-browser .card-grid .feature-card {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    background-color: #f1f7fc;
 }
