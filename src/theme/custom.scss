@@ -1,16 +1,32 @@
 // custom background color to match Boyd's catalog explorer
 body {
-    font-family: 'BellTopo Sans Regular', serif;
+    font-family: 'Open Sans', sans-serif;
     background: #ddeadd;
     color: #050705;
     font-size: 100%;
 }
 
-
 // header title 
 h1 {
     font-size: 150% !important;
-    font-family: 'BellTopo Sans Regular', serif;
+    font-family: 'BellTopo Sans', serif;
+}
+
+h2 {
+    color: #3d5c3d;
+}
+
+h2, h3, h4, .title {
+    font-family: 'BellTopo Sans', serif;
+}
+
+h3, h4 {
+    text-align: center;
+}
+
+
+h4 a {
+    color: #0f1a0f;
 }
 
 a {
@@ -19,21 +35,8 @@ a {
     background-color: transparent;
 }
 
-h2 {
-    color: #3d5c3d;
-    font-family: 'BellTopo Sans Regular', serif;
-}
-
 p {
     text-align: justify;
-}
-
-h4 {
-    text-align: center;
-}
-
-h4 a {
-    color: #0f1a0f;
 }
 
 // Searh bar
@@ -44,7 +47,6 @@ h4 a {
 card-img-wrapper {
     background-color: #f1f7fc;   
 }
-
 
 #stac-browser .card-grid .catalog-card, #stac-browser .card-grid .item-card, #stac-browser .card-grid .feature-card {
     display: grid;
