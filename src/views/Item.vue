@@ -11,6 +11,9 @@
               <b-tab v-if="hasThumbnails" :title="$t('thumbnails')" no-body>
                 <Thumbnails :thumbnails="thumbnails" />
               </b-tab>
+              <b-tab v-else-if="lidarThumbnailUrl" :title="$t('thumbnails')" no-body>
+                <LidarThumbnail :data="data" :size="400" class="previews" />
+              </b-tab>
             </b-tabs>
           </b-card>
         </section>
@@ -43,6 +46,7 @@ import ShowAssetLinkMixin from '../components/ShowAssetLinkMixin';
 import DeprecationMixin from '../components/DeprecationMixin';
 import { BTabs, BTab } from 'bootstrap-vue';
 import { addSchemaToDocument, createItemSchema } from '../schema-org';
+import { getHillshadeUrl } from '../components/maps/thumbnails.js';
 
 export default {
   name: "Item",
@@ -60,7 +64,8 @@ export default {
     Metadata: () => import('../components/Metadata.vue'),
     Providers: () => import('../components/Providers.vue'),
     ReadMore,
-    Thumbnails: () => import('../components/Thumbnails.vue')
+    Thumbnails: () => import('../components/Thumbnails.vue'),
+    LidarThumbnail: () => import('../components/LidarThumbnail.vue')
   },
   mixins: [
     ShowAssetLinkMixin,
@@ -87,7 +92,10 @@ export default {
   },
   computed: {
     ...mapState(['data', 'url']),
-    ...mapGetters(['collectionLink', 'parentLink'])
+    ...mapGetters(['collectionLink', 'parentLink']),
+    lidarThumbnailUrl() {
+      return getHillshadeUrl(this.data, 800);
+    }
   },
   watch: {
     data: {

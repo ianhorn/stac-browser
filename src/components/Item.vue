@@ -2,6 +2,7 @@
   <b-card no-body class="item-card" :class="classes" v-b-visible.400="load">
     <div class="card-img-wrapper">
       <b-card-img-lazy v-if="hasImage" class="thumbnail" offset="200" v-bind="thumbnail" />
+      <LidarThumbnail v-else-if="data" :data="data" />
     </div>
     <b-card-body>
       <b-card-title>
@@ -36,7 +37,8 @@ export default {
   name: 'Item',
   components: {
     StacLink,
-    Keywords: () => import('./Keywords.vue')
+    Keywords: () => import('./Keywords.vue'),
+    LidarThumbnail: () => import('./LidarThumbnail.vue')
   },
   filters: {
     formatTemporalExtent,

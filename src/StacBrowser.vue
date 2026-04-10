@@ -18,10 +18,14 @@
             </b-button-group>
           </nav>
           <div class="title">
-            <img v-if="logo" :src="logo.getAbsoluteUrl()" :alt="logo.title" :title="logo.title" class="logo">
+            
+            <!-- <img v-if="logo" :src="logo.getAbsoluteUrl()" :alt="logo.title" :title="logo.title" class="logo"> -->
             <span role="banner">
-              <StacLink v-if="root" :data="root" hideIcon />
-              <template v-else>{{ catalogTitle }}</template>
+              <StacLink v-if="isRoot" :data="root" hideIcon />
+              <template v-else>
+                <img src="/stac/logo-small-blue.svg" alt="KY DGI" class="site-logo">
+                <StacLink :data="root" hideIcon />
+              </template>
             </span>
             <b-button
               v-if="root" size="sm" variant="outline-primary" id="popover-root-btn"
@@ -35,10 +39,10 @@
               <b-button v-if="canAuthenticate" variant="primary" size="sm" @click="logInOut" :title="authTitle">
                 <component :is="authIcon" /><span class="button-label">{{ authLabel }}</span>
               </b-button>
-              <LanguageChooser
+              <!-- <LanguageChooser
                 :data="data" :currentLocale="localeFromVueX" :locales="supportedLocalesFromVueX"
                 @setLocale="locale => switchLocale({locale, userSelected: true})"
-              />
+              /> -->
             </b-button-group>
           </nav>
         </b-col>
@@ -47,7 +51,15 @@
         <b-col md="12">
           <div class="title">
             <img v-if="icon && !isRoot" :src="icon.getAbsoluteUrl()" :alt="icon.title" :title="icon.title" class="icon">
-            <h1>{{ title }}</h1>
+            <div v-if="isRoot" class="header-brand">
+              <img src="https://kygislicserv.ky.gov/mini-apps/oblique-viewer/logo-small.svg" alt="KY DGI" style="height:50px;width:auto;display:block;">
+              <div class="brand-text">
+                <!-- <span class="brand-title">{{ title }}</span> -->
+                 <span class="brand-title">KyFromAbove SpatioTemporal Asset Catalog</span>
+                <span class="brand-subtitle">Kentucky Division of Geographic Information</span>
+              </div>
+            </div>
+            <h1 v-else>{{ title }}</h1>
           </div>
           <nav class="actions navigation">
             <b-button-group>
@@ -69,6 +81,9 @@
     <!-- Content (Item / Catalog) -->
     <router-view />
     <footer>
+      <ul>
+          <a href="https://kygeonet.ky.gov/" target="_blank"><img src="/stac/dgi-logo.svg" alt="KY DGI" style="height:100px;width:auto;"></a>
+      </ul>
       <ul v-if="Array.isArray(footerLinksFromVueX) && footerLinksFromVueX.length > 0" class="footer-links text-muted">
         <li v-for="link in footerLinksFromVueX" :key="link.url">
           <a :href="link.url" target="_blank">{{ $te(`footerLinks.${link.label}`) ? $t(`footerLinks.${link.label}`) : link.label }}</a>
