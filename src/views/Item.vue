@@ -13,6 +13,7 @@
               </b-tab>
               <b-tab v-else-if="lidarThumbnailUrl" :title="$t('thumbnails')" no-body>
                 <LidarThumbnail :data="data" :size="400" class="previews" />
+                <!-- <LidarThumbnail :data="data"  class="previews" /> -->
               </b-tab>
             </b-tabs>
           </b-card>
