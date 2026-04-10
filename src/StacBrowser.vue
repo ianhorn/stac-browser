@@ -22,7 +22,7 @@
             <!-- <img v-if="logo" :src="logo.getAbsoluteUrl()" :alt="logo.title" :title="logo.title" class="logo"> -->
             <span role="banner">
               <StacLink v-if="isRoot" :data="root" hideIcon />
-              <template v-else>
+              <template v-else-if="root">
                 <img src="/stac/logo-small-blue.svg" alt="KY DGI" class="site-logo">
                 <StacLink :data="root" hideIcon />
               </template>

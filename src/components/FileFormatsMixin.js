@@ -24,7 +24,13 @@ export default {
       
       // Map to formatted names and sort alphabetically
       return uniqueTypes
-        .map(type => formatMediaType(type, null, {shorten: true}))
+        .map(type => {
+          try {
+            return formatMediaType(type, null, {shorten: true});
+          } catch (_) {
+            return type;
+          }
+        })
         .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
     }
   }
