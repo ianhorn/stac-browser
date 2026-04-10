@@ -7,7 +7,7 @@ import ZoomControl from 'ol/control/Zoom.js';
 import AttributionControl from 'ol/control/Attribution.js';
 import FullScreenControl from 'ol/control/FullScreen.js';
 import { stacRequest } from '../../store/utils';
-
+import { fromLonLat } from 'ol/proj.js';
 import configureBasemap from '../../../basemaps.config';
 import CONFIG from '../../../config';
 import proj4 from 'proj4';
@@ -84,8 +84,9 @@ export default {
           onfocusOnly
         }),
         view: new View({
-          center: [0, 0],
-          zoom: 0,
+          center: fromLonLat([-84.5, 38.0]),
+          // center: [-85, 40].map(c => c * 20037508.34 / 180), // Center on US
+          zoom: 6,
           showFullExtent: true,
           projection,
         }),

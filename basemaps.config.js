@@ -11,7 +11,7 @@ const BASEMAPS = {
       title: 'OpenStreetMap',
       attributions: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.',
       projection: "EPSG:3857",
-      visible: true,
+      visible: false,
       zIndex: 0
     },
     {
