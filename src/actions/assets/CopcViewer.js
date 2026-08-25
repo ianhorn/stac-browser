@@ -6,19 +6,20 @@ export default class CopcViewer extends AssetActionPlugin {
 
   get show() {
     return this.component.isBrowserProtocol && (
-      this.asset.type === 'application/vnd.laszip+copc'
+      this.asset.type === 'application/vnd.laszip+copc' 
+      || this.asset.href.toLowerCase().endsWith('.copc.laz')
       ||  URI(this.asset.href).filename() == 'ept.json'
     );
   }
 
   get uri() {
-    let uri = new URI("https://viewer.copc.io");
+    let uri = new URI("https://eptium.com");
     uri.addQuery('copc', this.component.href);
     return uri;
   }
 
   get text() {
-    return i18n.t('actions.openIn', {service: 'copc.io'});
+    return i18n.t('actions.openIn', {service: 'eptium.com'});
   }
 
 }
