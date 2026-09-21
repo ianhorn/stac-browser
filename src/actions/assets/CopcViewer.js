@@ -13,7 +13,7 @@ export default class CopcViewer extends AssetActionPlugin {
   }
 
   get uri() {
-    let uri = new URI("https://eptium.com");
+    let uri = new URI("https://kygeonet.ky.gov/copc/viewer/index.html");
     uri.addQuery('copc', this.component.href);
     return uri;
   }
